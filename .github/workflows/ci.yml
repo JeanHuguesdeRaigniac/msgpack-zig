@@ -1,19 +1,49 @@
 name: CI
 on: [push, pull_request]
+
 jobs:
   test:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            zig_url: https://ziglang.org/download/0.16.0/zig-x86_64-linux-0.16.0.tar.xz
+            zig_dir: zig-x86_64-linux-0.16.0
+          - os: macos-latest
+            zig_url: https://ziglang.org/download/0.16.0/zig-aarch64-macos-0.16.0.tar.xz
+            zig_dir: zig-aarch64-macos-0.16.0
+          - os: windows-latest
+            zig_url: https://ziglang.org/download/0.16.0/zig-x86_64-windows-0.16.0.zip
+            zig_dir: zig-x86_64-windows-0.16.0
+
     steps:
       - uses: actions/checkout@v4
-      - uses: mlugg/setup-zig@v1
-        with:
-          version: "0.16.0"
+
+      - name: Install Zig 0.16.0 on Linux/macOS
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -L "${{ matrix.zig_url }}" -o zig.tar.xz
+          tar -xf zig.tar.xz
+          echo "$GITHUB_WORKSPACE/${{ matrix.zig_dir }}" >> "$GITHUB_PATH"
+          zig version
+
+      - name: Install Zig 0.16.0 on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Invoke-WebRequest "${{ matrix.zig_url }}" -OutFile zig.zip
+          Expand-Archive zig.zip -DestinationPath .
+          Add-Content -Path $env:GITHUB_PATH -Value "$env:GITHUB_WORKSPACE\${{ matrix.zig_dir }}"
+          zig version
+
       - name: Build
         run: zig build
+
       - name: Unit tests
         run: zig build test --summary all
+
       - name: Conformance tests
         run: zig build test-conformance --summary all
