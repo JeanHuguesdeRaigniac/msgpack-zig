@@ -27,6 +27,7 @@ jobs:
           set -euo pipefail
           curl -L "${{ matrix.zig_url }}" -o zig.tar.xz
           tar -xf zig.tar.xz
+          export PATH="$GITHUB_WORKSPACE/${{ matrix.zig_dir }}:$PATH"
           echo "$GITHUB_WORKSPACE/${{ matrix.zig_dir }}" >> "$GITHUB_PATH"
           zig version
 
@@ -36,7 +37,9 @@ jobs:
         run: |
           Invoke-WebRequest "${{ matrix.zig_url }}" -OutFile zig.zip
           Expand-Archive zig.zip -DestinationPath .
-          Add-Content -Path $env:GITHUB_PATH -Value "$env:GITHUB_WORKSPACE\${{ matrix.zig_dir }}"
+          $zigPath = "$env:GITHUB_WORKSPACE\${{ matrix.zig_dir }}"
+          $env:Path = "$zigPath;$env:Path"
+          Add-Content -Path $env:GITHUB_PATH -Value $zigPath
           zig version
 
       - name: Build
