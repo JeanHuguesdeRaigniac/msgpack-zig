@@ -1,0 +1,15 @@
+{
+  "zig.path": "/opt/homebrew/bin/zig",
+  "zig.zls.path": "/opt/homebrew/bin/zls",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "ziglang.vscode-zig",
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "zig.buildOnSaveProvider": "extension",
+  "zig.buildOnSaveArgs": [
+    "-Doptimize=Debug"
+  ],
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}

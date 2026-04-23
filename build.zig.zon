@@ -1,0 +1,15 @@
+.{
+    .name = .msgpack,
+    .fingerprint = 0x6733a756ec7a45e3,
+    .version = "0.1.0",
+    .minimum_zig_version = "0.16.0",
+    .dependencies = .{},
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+        "test",
+        "README.md",
+        "LICENSE",
+    },
+}
